@@ -5,7 +5,7 @@ namespace Lab.SqlStreamStoreDemo.Framework
     public abstract class EventSourced
     {
 
-        internal DomainContext Context { get; set; }
+        internal EventSourcedContext Context { get; set; }
 
         public abstract string PersistenceId { get; }
 

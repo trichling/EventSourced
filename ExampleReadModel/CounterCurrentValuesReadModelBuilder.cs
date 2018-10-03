@@ -11,7 +11,7 @@ namespace Lab.SqlStreamStoreDemo.ExampleReadModel
 
         private Dictionary<Guid, int> counterValues = new Dictionary<Guid, int>();
 
-        public CounterCurrentValuesReadModelBuilder(DomainContext context)
+        public CounterCurrentValuesReadModelBuilder(EventSourcedContext context)
         {
             context.EventStream.Subscribe<CounterIntitialized>(HandleCounterInitialized);
             context.EventStream.Subscribe<CounterIncremented>(HandleCounterIncremented);

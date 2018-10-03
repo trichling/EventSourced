@@ -8,16 +8,16 @@ using SqlStreamStore.Streams;
 
 namespace Lab.SqlStreamStoreDemo.Framework
 {
-    public class DomainContext
+    public class EventSourcedContext
     {
         private IStreamStore streamStore;
 
-        public DomainContext(IStreamStore streamStore)
+        public EventSourcedContext(IStreamStore streamStore)
             :this(streamStore, new EventStream())
         {
         }
 
-        public DomainContext(IStreamStore streamStore, IEventStream eventStream)
+        public EventSourcedContext(IStreamStore streamStore, IEventStream eventStream)
         {
             this.streamStore = streamStore;
             EventStream = eventStream;

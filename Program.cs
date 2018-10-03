@@ -18,7 +18,7 @@ namespace Lab.SqlStreamStoreDemo
             var streamStore = new MsSqlStreamStore(settings);
             streamStore.CreateSchema().GetAwaiter().GetResult();
 
-            var domainContext = new DomainContext(streamStore);
+            var domainContext = new EventSourcedContext(streamStore);
 
             var readModel = new CounterCurrentValuesReadModelBuilder(domainContext);
 
