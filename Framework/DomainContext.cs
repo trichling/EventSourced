@@ -21,7 +21,6 @@ namespace Lab.SqlStreamStoreDemo.Framework
             streamStore.CreateSchema().GetAwaiter().GetResult();
 
             serviceCollection = new ServiceCollection();
-            serviceCollection.AddSingleton<DomainContext>(this);
             serviceCollection.AddSingleton<EventHandlerRepository>(new EventHandlerRepository());
             serviceCollection.AddTransient<IStreamStore, MsSqlStreamStore>(p => new MsSqlStreamStore(settings));
             serviceCollection.AddMediatR();

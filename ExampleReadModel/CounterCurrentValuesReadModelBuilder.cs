@@ -13,14 +13,11 @@ namespace Lab.SqlStreamStoreDemo.ExampleReadModel
 
         public CounterCurrentValuesReadModelBuilder(DomainContext context)
         {
-            Context = context;
-
-            Context.EventStream.Subscribe<CounterIntitialized>(HandleCounterInitialized);
-            Context.EventStream.Subscribe<CounterIncremented>(HandleCounterIncremented);
-            Context.EventStream.Subscribe<CounterDecremented>(HandleCounterDecremented);
+            context.EventStream.Subscribe<CounterIntitialized>(HandleCounterInitialized);
+            context.EventStream.Subscribe<CounterIncremented>(HandleCounterIncremented);
+            context.EventStream.Subscribe<CounterDecremented>(HandleCounterDecremented);
         }
 
-        public DomainContext Context { get; }
         
         public void HandleCounterInitialized(CounterIntitialized counterInitialized)
         {
