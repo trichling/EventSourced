@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using SqlStreamStore;
 using SqlStreamStore.Streams;
@@ -10,6 +12,27 @@ namespace Lab.SqlStreamStoreDemo.Framework
 {
     public class DomainContext
     {
+        private ServiceCollection serviceCollection;
+        private ServiceProvider serviceProvider;
+
+        public DomainContext(string connectionString)
+        {
+            var settings = new MsSqlStreamStoreSettings(connectionString);
+            var streamStore = new MsSqlStreamStore(settings);
+            streamStore.CreateSchema().GetAwaiter().GetResult();
+
+            serviceCollection = new ServiceCollection();
+            serviceCollection.AddSingleton<DomainContext>(this);
+            serviceCollection.AddSingleton<EventHandlerRepository>(new EventHandlerRepository());
+            serviceCollection.AddTransient<IStreamStore, MsSqlStreamStore>(p => new MsSqlStreamStore(settings));
+            serviceCollection.AddMediatR();
+            serviceProvider =  serviceCollection.BuildServiceProvider();
+
+            
+            StreamStore = serviceProvider.GetService<IStreamStore>();
+            Mediator = serviceProvider.GetService<IMediator>();
+            EventStream = serviceProvider.GetService<EventHandlerRepository>();
+        }
 
         public DomainContext(IMediator mediator, IStreamStore streamStore)
         {
@@ -18,6 +41,7 @@ namespace Lab.SqlStreamStoreDemo.Framework
         }
 
         public IMediator Mediator { get; }
+        public EventHandlerRepository EventStream { get; }
         public IStreamStore StreamStore { get; }
 
         public async Task<T> Get<T>(Expression<Func<T>> factory, params object[] args) where T : EventSourced
@@ -38,6 +62,40 @@ namespace Lab.SqlStreamStoreDemo.Framework
             }
 
             return instance;
+        }
+
+        public void Subscribe<T>(Action<T> handler)
+        {
+
+        }
+    }
+
+    public class EventHandlerRepository
+    {
+        private Dictionary<Type, List<dynamic>> handlerList = new Dictionary<Type, List<dynamic>>();
+
+         public void Subscribe<T>(Action<T> handler)
+        {
+            if (!handlerList.ContainsKey(typeof(T)))
+                handlerList.Add(typeof(T), new List<dynamic>());
+
+            handlerList[typeof(T)].Add(handler);
+        }
+
+        public void Invoke(PublishedEvent notification)
+        {
+            var eventType = notification.Event.GetType();
+
+            if (!handlerList.ContainsKey(eventType))
+                return;
+
+            var handlers = handlerList[notification.Event.GetType()];
+            foreach (var handler in handlers)
+            {
+                ((Delegate)handler).DynamicInvoke(notification.Event);
+            }
+
+            return;
         }
     }
 }
