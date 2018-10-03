@@ -1,7 +1,6 @@
 using System;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using SqlStreamStore;
@@ -11,30 +10,20 @@ namespace Lab.SqlStreamStoreDemo.Framework
 {
     public class DomainContext
     {
-        private ServiceCollection serviceCollection;
-        private ServiceProvider serviceProvider;
+        private IStreamStore streamStore;
 
-        public DomainContext(string connectionString)
+        public DomainContext(IStreamStore streamStore)
+            :this(streamStore, new EventStream())
         {
-            var settings = new MsSqlStreamStoreSettings(connectionString);
-            var streamStore = new MsSqlStreamStore(settings);
-            streamStore.CreateSchema().GetAwaiter().GetResult();
-
-            serviceCollection = new ServiceCollection();
-            serviceCollection.AddSingleton<EventHandlerRepository>(new EventHandlerRepository());
-            serviceCollection.AddTransient<IStreamStore, MsSqlStreamStore>(p => new MsSqlStreamStore(settings));
-            serviceCollection.AddMediatR();
-            serviceProvider =  serviceCollection.BuildServiceProvider();
-
-            
-            StreamStore = serviceProvider.GetService<IStreamStore>();
-            Mediator = serviceProvider.GetService<IMediator>();
-            EventStream = serviceProvider.GetService<EventHandlerRepository>();
         }
 
-        public IMediator Mediator { get; }
-        public EventHandlerRepository EventStream { get; }
-        public IStreamStore StreamStore { get; }
+        public DomainContext(IStreamStore streamStore, IEventStream eventStream)
+        {
+            this.streamStore = streamStore;
+            EventStream = eventStream;
+        }
+
+        public IEventStream EventStream { get; }
 
         public async Task<T> Get<T>(Expression<Func<T>> factory, params object[] args) where T : EventSourced
         {
@@ -42,7 +31,7 @@ namespace Lab.SqlStreamStoreDemo.Framework
             instance.Context = this;
 
             var streamId = new StreamId(instance.PersistenceId);
-            var readStreamPage = await StreamStore.ReadStreamForwards(streamId, StreamVersion.Start, int.MaxValue);
+            var readStreamPage = await streamStore.ReadStreamForwards(streamId, StreamVersion.Start, int.MaxValue);
 
             foreach (var message in readStreamPage.Messages)
             {
@@ -56,5 +45,13 @@ namespace Lab.SqlStreamStoreDemo.Framework
             return instance;
         }
         
+        internal async Task<bool> Persist(string persistenceId, object @event)
+        {
+            var streamId = new StreamId(persistenceId);
+            var message = new NewStreamMessage(Guid.NewGuid(), @event.GetType().Name, JsonConvert.SerializeObject(@event));
+            var appendResult = await streamStore.AppendToStream(streamId, ExpectedVersion.Any, message);
+
+            return true;
+        }
     }
 }

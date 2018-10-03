@@ -40,7 +40,7 @@ namespace Lab.SqlStreamStoreDemo.ExampleAggregate
         }
 
 
-         public void Handle(DecrementCounter decrementCounter)
+        public void Handle(DecrementCounter decrementCounter)
         {
             Causes(new CounterDecremented(_id, decrementCounter.ByValue));
         }

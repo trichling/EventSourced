@@ -26,14 +26,14 @@ namespace Lab.SqlStreamStoreDemo.Framework
 
         public async void Persist(object @event, Action<object> callback)
         {
-            var persistSuccessful = Context.Mediator.Send(new PersistEvent(this.PersistenceId, @event)).GetAwaiter().GetResult();
+            var persistSuccessful = Context.Persist(PersistenceId, @event).GetAwaiter().GetResult();
             if (persistSuccessful)
                 Publish(@event);
         }
 
         public void Publish(object @event)
         {
-            Context.Mediator.Publish(new PublishedEvent(@event.GetType().Name,  @event));
+            Context.EventStream.Publish(@event);
             DispatchToApply(@event);
         }
 

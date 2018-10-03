@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Lab.SqlStreamStoreDemo.Framework
 {
-    public class EventHandlerRepository
+    public class EventStream : IEventStream
     {
         private Dictionary<Type, List<dynamic>> handlerList = new Dictionary<Type, List<dynamic>>();
 
@@ -15,17 +15,17 @@ namespace Lab.SqlStreamStoreDemo.Framework
             handlerList[typeof(T)].Add(handler);
         }
 
-        public void Invoke(PublishedEvent notification)
+        public void Publish(object notification)
         {
-            var eventType = notification.Event.GetType();
+            var eventType = notification.GetType();
 
             if (!handlerList.ContainsKey(eventType))
                 return;
 
-            var handlers = handlerList[notification.Event.GetType()];
+            var handlers = handlerList[notification.GetType()];
             foreach (var handler in handlers)
             {
-                ((Delegate)handler).DynamicInvoke(notification.Event);
+                ((Delegate)handler).DynamicInvoke(notification);
             }
 
             return;
