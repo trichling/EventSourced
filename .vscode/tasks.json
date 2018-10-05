@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/Lab.SqlStreamStore.csproj"
+                "${workspaceFolder}/EventSourced.Example/EventSourced.Example.csproj"
             ],
             "problemMatcher": "$msCompile"
         }

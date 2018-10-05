@@ -36,7 +36,7 @@ namespace Lab.SqlStreamStoreDemo.Framework
             foreach (var message in readStreamPage.Messages)
             {
                 var eventJson = await message.GetJsonData();
-                var eventTypeName = $"Lab.SqlStreamStoreDemo.ExampleAggregate.Events.{message.Type}";
+                var eventTypeName = $"Lab.SqlStreamStoreDemo.ExampleAggregate.Events.{message.Type}, EventSourced.Example";
                 var eventType = Type.GetType(eventTypeName);
                 var @event = JsonConvert.DeserializeObject(eventJson, eventType);
                 instance.OnRecover(@event);
