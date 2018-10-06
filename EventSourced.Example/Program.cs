@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Lab.SqlStreamStoreDemo.ExampleAggregate;
 using Lab.SqlStreamStoreDemo.ExampleAggregate.Commands;
@@ -18,15 +19,18 @@ namespace Lab.SqlStreamStoreDemo
             var streamStore = new MsSqlStreamStore(settings);
             streamStore.CreateSchema().GetAwaiter().GetResult();
 
+            //var domainContext = new EventSourcedContext(streamStore, new SqlStreamStoreEventStream(streamStore));
             var domainContext = new EventSourcedContext(streamStore);
 
-            var readModel = new CounterCurrentValuesReadModelBuilder(domainContext);
+            // var readModel = new CounterCurrentValuesReadModelBuilder(domainContext);
 
             var counterId = Guid.Parse("8c936406-720a-45d4-b1e0-a95bd595943f");
             var counter = await domainContext.Get<Counter>(() => new Counter(counterId));
-            counter.Handle(new InitializeCounter(5));
-            counter.Handle(new IncrementCounter(8));
-            counter.Handle(new DecrementCounter(3));
+            // counter.Handle(new InitializeCounter(5));
+            // counter.Handle(new IncrementCounter(8));
+            // counter.Handle(new DecrementCounter(3));
+
+            Thread.Sleep(100);
         }
 
         private static async Task ACounter()
