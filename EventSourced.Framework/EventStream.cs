@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace Lab.SqlStreamStoreDemo.Framework
+namespace EventSourced.Framework
 {
     public class EventStream : IEventStream
     {
@@ -17,18 +18,18 @@ namespace Lab.SqlStreamStoreDemo.Framework
 
         public void Publish(object notification)
         {
-            var eventType = notification.GetType();
+            Task.Factory.StartNew(() => {
+                var eventType = notification.GetType();
 
-            if (!handlerList.ContainsKey(eventType))
-                return;
+                if (!handlerList.ContainsKey(eventType))
+                    return;
 
-            var handlers = handlerList[notification.GetType()];
-            foreach (var handler in handlers)
-            {
-                ((Delegate)handler).DynamicInvoke(notification);
-            }
-
-            return;
+                var handlers = handlerList[notification.GetType()].AsReadOnly();
+                foreach (var handler in handlers)
+                {
+                    ((Delegate)handler).DynamicInvoke(notification);
+                }
+            });
         }
     }
 }

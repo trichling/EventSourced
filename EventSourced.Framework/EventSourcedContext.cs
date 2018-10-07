@@ -6,26 +6,28 @@ using Newtonsoft.Json;
 using SqlStreamStore;
 using SqlStreamStore.Streams;
 
-namespace Lab.SqlStreamStoreDemo.Framework
+namespace EventSourced.Framework
 {
     public class EventSourcedContext
     {
         private IStreamStore streamStore;
 
         public EventSourcedContext(IStreamStore streamStore)
-            :this(streamStore, new EventStream())
+            :this(streamStore, new EventStream(), new AllPersistenceIdsProjection(streamStore))
         {
         }
 
-        public EventSourcedContext(IStreamStore streamStore, IEventStream eventStream)
+        public EventSourcedContext(IStreamStore streamStore, IEventStream eventStream, IAllPersistenceIdsProjection allPersistenceIdsProjection)
         {
             this.streamStore = streamStore;
             EventStream = eventStream;
+            AllStreams = allPersistenceIdsProjection;
         }
 
         public IEventStream EventStream { get; }
+        public IAllPersistenceIdsProjection AllStreams { get; }
 
-        public async Task<T> Get<T>(Expression<Func<T>> factory, params object[] args) where T : EventSourced
+        public async Task<T> Get<T>(Expression<Func<T>> factory, params object[] args) where T : EventSourcedBase
         {
             var instance = (T)factory.Compile().DynamicInvoke(args);
             instance.Context = this;
@@ -36,7 +38,7 @@ namespace Lab.SqlStreamStoreDemo.Framework
             foreach (var message in readStreamPage.Messages)
             {
                 var eventJson = await message.GetJsonData();
-                var eventTypeName = $"Lab.SqlStreamStoreDemo.ExampleAggregate.Events.{message.Type}, EventSourced.Example";
+                var eventTypeName = $"EventSourced.Example.Aggregate.Events.{message.Type}, EventSourced.Example";
                 var eventType = Type.GetType(eventTypeName);
                 var @event = JsonConvert.DeserializeObject(eventJson, eventType);
                 instance.OnRecover(@event);

@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Lab.SqlStreamStoreDemo.ExampleAggregate;
-using Lab.SqlStreamStoreDemo.ExampleAggregate.Commands;
-using Lab.SqlStreamStoreDemo.ExampleReadModel;
-using Lab.SqlStreamStoreDemo.Framework;
+using EventSourced.Framework;
+using EventSourced.Example.Aggregate.Commands;
 using Microsoft.Extensions.DependencyInjection;
 using SqlStreamStore;
+using EventSourced.Example.Aggregate;
+using EventSourced.Example.Example.ReadModel;
 
-namespace Lab.SqlStreamStoreDemo
+namespace EventSourced.Example
 {
     class Program
     {
@@ -22,15 +22,15 @@ namespace Lab.SqlStreamStoreDemo
             //var domainContext = new EventSourcedContext(streamStore, new SqlStreamStoreEventStream(streamStore));
             var domainContext = new EventSourcedContext(streamStore);
 
-            // var readModel = new CounterCurrentValuesReadModelBuilder(domainContext);
+            var readModel = new CounterCurrentValuesReadModelBuilder(domainContext);
 
             var counterId = Guid.Parse("8c936406-720a-45d4-b1e0-a95bd595943f");
             var counter = await domainContext.Get<Counter>(() => new Counter(counterId));
-            // counter.Handle(new InitializeCounter(5));
-            // counter.Handle(new IncrementCounter(8));
-            // counter.Handle(new DecrementCounter(3));
+            counter.Handle(new InitializeCounter(5));
+            counter.Handle(new IncrementCounter(8));
+            counter.Handle(new DecrementCounter(3));
 
-            Thread.Sleep(100);
+            Thread.Sleep(5000);
         }
 
         private static async Task ACounter()

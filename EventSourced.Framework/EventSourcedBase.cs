@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 
-namespace Lab.SqlStreamStoreDemo.Framework
+namespace EventSourced.Framework
 {
-    public abstract class EventSourced
+    public abstract class EventSourcedBase
     {
 
         internal EventSourcedContext Context { get; set; }

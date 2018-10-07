@@ -1,6 +1,6 @@
 using System;
 
-namespace Lab.SqlStreamStoreDemo.Framework
+namespace EventSourced.Framework
 {
 
     public interface IEventStream

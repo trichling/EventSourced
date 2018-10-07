@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Lab.SqlStreamStoreDemo.ExampleAggregate.Events;
-using Lab.SqlStreamStoreDemo.Framework;
+using EventSourced.Framework;
+using EventSourced.Example.Aggregate.Events;
 
-namespace Lab.SqlStreamStoreDemo.ExampleReadModel
+namespace EventSourced.Example.Example.ReadModel
 {
 
     public class CounterCurrentValuesReadModelBuilder

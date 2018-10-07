@@ -7,7 +7,7 @@ using SqlStreamStore;
 using SqlStreamStore.Streams;
 using SqlStreamStore.Subscriptions;
 
-namespace Lab.SqlStreamStoreDemo.Framework
+namespace EventSourced.Framework
 {
     public class SqlStreamStoreEventStream : IEventStream
     {

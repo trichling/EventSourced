@@ -1,6 +1,6 @@
 using System;
 
-namespace Lab.SqlStreamStoreDemo.ExampleAggregate.Events
+namespace EventSourced.Example.Aggregate.Events
 {
     public class CounterIncremented
     {

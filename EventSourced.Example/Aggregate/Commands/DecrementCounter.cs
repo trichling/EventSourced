@@ -1,4 +1,4 @@
-namespace Lab.SqlStreamStoreDemo.ExampleAggregate.Commands
+namespace EventSourced.Example.Aggregate.Commands
 {
     public class DecrementCounter
     {

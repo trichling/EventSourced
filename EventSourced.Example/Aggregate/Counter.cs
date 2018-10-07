@@ -1,11 +1,11 @@
 using System;
-using Lab.SqlStreamStoreDemo.ExampleAggregate.Commands;
-using Lab.SqlStreamStoreDemo.ExampleAggregate.Events;
-using Lab.SqlStreamStoreDemo.Framework;
+using EventSourced.Framework;
+using EventSourced.Example.Aggregate.Commands;
+using EventSourced.Example.Aggregate.Events;
 
-namespace Lab.SqlStreamStoreDemo.ExampleAggregate
+namespace EventSourced.Example.Aggregate
 {
-    public class Counter : EventSourced
+    public class Counter : EventSourcedBase
     {
         private Guid _id;
         private int _counter;
