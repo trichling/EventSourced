@@ -11,16 +11,18 @@ namespace EventSourced.Framework
     public class EventSourcedContext
     {
         private IStreamStore streamStore;
+        private readonly ITypeResovler typeResovler;
 
-        public EventSourcedContext(IStreamStore streamStore)
-            :this(streamStore, new EventStream(), new AllPersistenceIdsProjection(streamStore))
+        public EventSourcedContext(IStreamStore streamStore, ITypeResovler typeResovler)
+            :this(streamStore, new EventStream(), typeResovler, new AllPersistenceIdsProjection(streamStore))
         {
         }
 
-        public EventSourcedContext(IStreamStore streamStore, IEventStream eventStream, IAllPersistenceIdsProjection allPersistenceIdsProjection)
+        public EventSourcedContext(IStreamStore streamStore, IEventStream eventStream, ITypeResovler typeResovler, IAllPersistenceIdsProjection allPersistenceIdsProjection)
         {
             this.streamStore = streamStore;
             EventStream = eventStream;
+            this.typeResovler = typeResovler;
             AllStreams = allPersistenceIdsProjection;
         }
 
@@ -38,8 +40,7 @@ namespace EventSourced.Framework
             foreach (var message in readStreamPage.Messages)
             {
                 var eventJson = await message.GetJsonData();
-                var eventTypeName = $"EventSourced.Example.Aggregate.Events.{message.Type}, EventSourced.Example";
-                var eventType = Type.GetType(eventTypeName);
+                var eventType = typeResovler.ResolveFrom(message.Type);
                 var @event = JsonConvert.DeserializeObject(eventJson, eventType);
                 instance.OnRecover(@event);
             }
