@@ -31,7 +31,20 @@ namespace EventSourced.Tests
         [Fact]
         public async Task AppendToStreamWithWrongExpectedVersionThrowsException()
         {
-            Assert.False(true);
+            var streamStore = new InMemoryStreamStore();
+            var stremId = new StreamId("test");
+
+            var jsonIn =  @"{ 'Hello': 'World' }";
+            var message = new NewStreamMessage(Guid.NewGuid(), "Test", jsonIn);
+            await streamStore.AppendToStream(stremId, ExpectedVersion.NoStream, message);
+
+            jsonIn = @"{ 'Hello': 'New World' }";
+            message = new NewStreamMessage(Guid.NewGuid(), "Test", jsonIn);
+            await streamStore.AppendToStream(stremId, 0, message);
+
+            jsonIn = @"{ 'Hello': 'Very New World' }";
+            message = new NewStreamMessage(Guid.NewGuid(), "Test", jsonIn);
+            await Assert.ThrowsAsync(typeof(WrongExpectedVersionException), async () => {await streamStore.AppendToStream(stremId, 0, message); });
         }
 
         [Fact]
@@ -123,10 +136,5 @@ namespace EventSourced.Tests
             }
         }
 
-        [Fact]
-        public async Task WhenDidSubscribeToAllReceiveEvents()
-        {
-            Assert.False(true);
-        }
     }
 }
