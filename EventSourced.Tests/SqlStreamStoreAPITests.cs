@@ -5,6 +5,7 @@ using SqlStreamStore.Streams;
 using System.Threading.Tasks;
 using System.Threading;
 using SqlStreamStore.Subscriptions;
+using System.Runtime.Serialization;
 
 namespace EventSourced.Tests
 {
@@ -136,5 +137,6 @@ namespace EventSourced.Tests
             }
         }
 
+      
     }
 }

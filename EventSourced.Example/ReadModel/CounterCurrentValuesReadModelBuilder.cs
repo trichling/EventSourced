@@ -11,7 +11,7 @@ namespace EventSourced.Example.Example.ReadModel
 
         private Dictionary<Guid, int> counterValues = new Dictionary<Guid, int>();
 
-        public CounterCurrentValuesReadModelBuilder(EventSourcedContext context)
+        public CounterCurrentValuesReadModelBuilder(IEventSourcedContext context)
         {
             context.EventStream.Subscribe<CounterIntitialized>(HandleCounterInitialized);
             context.EventStream.Subscribe<CounterIncremented>(HandleCounterIncremented);

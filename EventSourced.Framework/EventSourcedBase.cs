@@ -5,7 +5,7 @@ namespace EventSourced.Framework
     public abstract class EventSourcedBase
     {
 
-        internal EventSourcedContext Context { get; set; }
+        public IEventSourcedContext Context { get; set; }
 
         public abstract string PersistenceId { get; }
 

@@ -8,17 +8,17 @@ using SqlStreamStore.Streams;
 
 namespace EventSourced.Framework
 {
-    public class EventSourcedContext
+    public class EventSourcedSqlStreamStoreContext : IEventSourcedContext
     {
         private IStreamStore streamStore;
         private readonly ITypeResovler typeResovler;
 
-        public EventSourcedContext(IStreamStore streamStore, ITypeResovler typeResovler)
-            :this(streamStore, new EventStream(), typeResovler, new AllPersistenceIdsProjection(streamStore))
+        public EventSourcedSqlStreamStoreContext(IStreamStore streamStore, ITypeResovler typeResovler)
+            :this(streamStore, new EventStream(), typeResovler, new AllPersistenceIdsSqlStreamStoreProjection(streamStore))
         {
         }
 
-        public EventSourcedContext(IStreamStore streamStore, IEventStream eventStream, ITypeResovler typeResovler, IAllPersistenceIdsProjection allPersistenceIdsProjection)
+        public EventSourcedSqlStreamStoreContext(IStreamStore streamStore, IEventStream eventStream, ITypeResovler typeResovler, IAllPersistenceIdsProjection allPersistenceIdsProjection)
         {
             this.streamStore = streamStore;
             EventStream = eventStream;
@@ -48,7 +48,7 @@ namespace EventSourced.Framework
             return instance;
         }
         
-        internal async Task<bool> Persist(string persistenceId, object @event)
+        public async Task<bool> Persist(string persistenceId, object @event)
         {
             var streamId = new StreamId(persistenceId);
             var message = new NewStreamMessage(Guid.NewGuid(), @event.GetType().Name, JsonConvert.SerializeObject(@event));

@@ -10,14 +10,14 @@ using SqlStreamStore.Subscriptions;
 
 namespace EventSourced.Framework {
 
-    public class AllPersistenceIdsProjection : IAllPersistenceIdsProjection 
+    public class AllPersistenceIdsSqlStreamStoreProjection : IAllPersistenceIdsProjection 
     {
         private readonly IStreamStore streamStore; 
         private HashSet<StreamId> streamIds;
         private bool hasCaughtUp;
         private long lastPosition;
 
-        public AllPersistenceIdsProjection(IStreamStore streamStore) 
+        public AllPersistenceIdsSqlStreamStoreProjection(IStreamStore streamStore) 
         {
             this.streamIds = new HashSet<StreamId>();
             this.streamStore = streamStore; 
@@ -27,7 +27,7 @@ namespace EventSourced.Framework {
 
         public bool IsUpToDate => hasCaughtUp && lastPosition == streamStore.ReadHeadPosition().Result;
 
-        public ReadOnlyCollection<StreamId> StreamIds => new ReadOnlyCollection<StreamId>(streamIds.ToList());
+        public ReadOnlyCollection<string> StreamIds => new ReadOnlyCollection<string>(streamIds.Select(s => s.Value).ToList());
 
         public async Task WaitUntilIsUpToDate()
         {

@@ -20,7 +20,7 @@ namespace EventSourced.Example
             var streamStore = new MsSqlStreamStore(settings);
             streamStore.CreateSchema().GetAwaiter().GetResult();
 
-            var domainContext = new EventSourcedContext(streamStore, tpyeResovler);
+            var domainContext = new EventSourcedSqlStreamStoreContext(streamStore, tpyeResovler);
 
             var readModel = new CounterCurrentValuesReadModelBuilder(domainContext);
 

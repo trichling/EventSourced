@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EventSourced.Framework\EventSourced.Framework.csproj" />
+    <ProjectReference Include="..\EventSourced.Example\EventSourced.Example.csproj" />
   </ItemGroup>
 
 </Project>

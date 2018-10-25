@@ -25,7 +25,7 @@ namespace EventSourced.Tests
             var message2 = new NewStreamMessage(Guid.NewGuid(), "Test2", @"{ 'Hello': 'World2' }");
             await streamStore.AppendToStream(stream2, ExpectedVersion.Any, message2);
 
-            var allPersistenceIdsProjection = new AllPersistenceIdsProjection(streamStore);
+            var allPersistenceIdsProjection = new AllPersistenceIdsSqlStreamStoreProjection(streamStore);
 
             await allPersistenceIdsProjection.WaitUntilIsUpToDate();
 
@@ -41,7 +41,7 @@ namespace EventSourced.Tests
             var message1 = new NewStreamMessage(Guid.NewGuid(), "Test1", @"{ 'Hello': 'World1' }");
             await streamStore.AppendToStream(stream1, ExpectedVersion.Any, message1);
 
-            var allPersistenceIdsProjection = new AllPersistenceIdsProjection(streamStore);
+            var allPersistenceIdsProjection = new AllPersistenceIdsSqlStreamStoreProjection(streamStore);
 
             await allPersistenceIdsProjection.WaitUntilIsUpToDate();
             Assert.Equal(1, allPersistenceIdsProjection.StreamIds.Count);

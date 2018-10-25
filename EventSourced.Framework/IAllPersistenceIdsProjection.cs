@@ -9,7 +9,7 @@ namespace EventSourced.Framework
 
         bool IsUpToDate { get; }
 
-        ReadOnlyCollection<StreamId> StreamIds { get; }
+        ReadOnlyCollection<string> StreamIds { get; }
 
         Task WaitUntilIsUpToDate();
     }
