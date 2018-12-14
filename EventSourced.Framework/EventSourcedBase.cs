@@ -37,7 +37,7 @@ namespace EventSourced.Framework
             DispatchToApply(@event);
         }
 
-         public void DispatchToApply(dynamic @event)
+        public void DispatchToApply(dynamic @event)
         {
             ((dynamic)this).Apply((dynamic)@event);
         }

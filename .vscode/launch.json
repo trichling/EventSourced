@@ -5,10 +5,10 @@
    "version": "0.2.0",
    "configurations": [
         {
-            "name": ".NET Core Launch (console)",
+            "name": "Launch example",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build",
+            "preLaunchTask": "buildExample",
             // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceFolder}/EventSourced.Example/bin/Debug/netcoreapp2.1/EventSourced.Example.dll",
             "args": [],
@@ -19,10 +19,18 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": ".NET Core Attach",
+            "name": "Launch simple",
             "type": "coreclr",
-            "request": "attach",
-            "processId": "${command:pickProcess}"
+            "request": "launch",
+            "preLaunchTask": "buildSimple",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/EventSourced.Simple/bin/Debug/netcoreapp2.2/EventSourced.Simple.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart"
         }
-    ,]
+    ]
 }

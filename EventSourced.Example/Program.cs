@@ -25,7 +25,7 @@ namespace EventSourced.Example
             var readModel = new CounterCurrentValuesReadModelBuilder(domainContext);
 
             var counterId = Guid.Parse("8c936406-720a-45d4-b1e0-a95bd595943f");
-            var counter = await domainContext.Get<Counter>(() => new Counter(counterId));
+            var counter = await domainContext.Get(() => new Counter(counterId));
             //counter.Handle(new InitializeCounter(5));
             counter.Handle(new IncrementCounter(8));
             counter.Handle(new DecrementCounter(3));
