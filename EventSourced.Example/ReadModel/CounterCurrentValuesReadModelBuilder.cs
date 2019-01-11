@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using EventSourced.Framework;
 using EventSourced.Example.Aggregate.Events;
+using EventSourced.Framework.Abstracions;
 
 namespace EventSourced.Example.Example.ReadModel
 {
@@ -11,7 +12,7 @@ namespace EventSourced.Example.Example.ReadModel
 
         private Dictionary<Guid, int> counterValues = new Dictionary<Guid, int>();
 
-        public CounterCurrentValuesReadModelBuilder(IEventSourcedContext context)
+        public CounterCurrentValuesReadModelBuilder(IEventSourcingSystem context)
         {
             context.EventStream.Subscribe<CounterIntitialized>(HandleCounterInitialized);
             context.EventStream.Subscribe<CounterIncremented>(HandleCounterIncremented);

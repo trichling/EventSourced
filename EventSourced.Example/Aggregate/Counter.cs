@@ -1,37 +1,42 @@
 using System;
 using EventSourced.Framework;
-using EventSourced.Example.Aggregate.Commands;
 using EventSourced.Example.Aggregate.Events;
+using EventSourced.Framework.Abstracions;
 
 namespace EventSourced.Example.Aggregate
 {
     public class Counter : EventSourcedBase
-    {
+      {
         private Guid _id;
-        private int _counter;
+        private int? _counter;
 
-        public override string PersistenceId => $"Counter-{_id}";
+        public override string PersistenceId => $"SimpleCounter-{_id}";
 
         public Counter(Guid id)
         {
             _id = id;
         }
 
-        public void Handle(InitializeCounter initializeCounter)
+        public void Initialize(int initialValue)
         {
-            Causes(new CounterIntitialized(_id, initializeCounter.InitialValue));
+            if (_counter != null)
+                throw new Exception("Counter ist bereits initialisiert");
+
+            Causes(new CounterIntitialized(_id, initialValue));
         }
 
         public void Apply(CounterIntitialized counterIntitialized)
         {
-            _id = counterIntitialized.CounterId;
             _counter = counterIntitialized.InitialValue;
         }
 
 
-        public void Handle(IncrementCounter incrementCounter)
+        public void Increment(int byValue)
         {
-            Causes(new CounterIncremented(_id, incrementCounter.ByValue));
+            if (_counter == null)
+                throw new Exception("Counter ist nicht initialisiert");
+
+            Causes(new CounterIncremented(_id, byValue));
         }
 
         public void Apply(CounterIncremented counterIncremented)
@@ -40,9 +45,15 @@ namespace EventSourced.Example.Aggregate
         }
 
 
-        public void Handle(DecrementCounter decrementCounter)
+        public void Decrement(int byValue)
         {
-            Causes(new CounterDecremented(_id, decrementCounter.ByValue));
+            if (_counter == null)
+                throw new Exception("Counter ist nicht initialisiert");
+                
+            if (_counter < byValue)
+                throw new Exception("Counter darf nicht negativ werden");
+
+            Causes(new CounterDecremented(_id, byValue));
         }
 
         public void Apply(CounterDecremented counterDecremented)

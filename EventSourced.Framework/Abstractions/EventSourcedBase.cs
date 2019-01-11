@@ -1,32 +1,30 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
-namespace EventSourced.Framework
+namespace EventSourced.Framework.Abstracions
 {
     public abstract class EventSourcedBase
     {
 
-        public IEventSourcedContext Context { get; set; }
+        public IEventSourcingSystem Context { get; set; }
 
         public abstract string PersistenceId { get; }
 
-        public void OnCommand(object command)
+        public void Recover(IEnumerable<dynamic> history)
         {
-            ((dynamic)this).Handle((dynamic)command);
-        }
-
-        public void OnRecover(object @event)
-        {
-            DispatchToApply(@event);
+            foreach (dynamic @event in history)
+                DispatchToApply(@event);
         }
 
         public void Causes(object @event)
         {
-            Persist(@event, Publish);
+            Persist(@event);
         }
 
-        public async void Persist(object @event, Action<object> callback)
+        public async void Persist(object @event)
         {
-            var persistSuccessful = Context.Persist(PersistenceId, @event).GetAwaiter().GetResult();
+            var persistSuccessful = Context.Save(PersistenceId, @event).GetAwaiter().GetResult();
             if (persistSuccessful)
                 Publish(@event);
         }

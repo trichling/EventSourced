@@ -1,5 +1,6 @@
 
 using System;
+using EventSourced.Framework.Abstracions;
 
 namespace EventSourced.Framework
 {

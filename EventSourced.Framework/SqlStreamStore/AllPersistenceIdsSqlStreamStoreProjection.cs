@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading; 
-using System.Threading.Tasks; 
+using System.Threading.Tasks;
+using EventSourced.Framework.Abstracions;
 using SqlStreamStore;
 using SqlStreamStore.Streams;
 using SqlStreamStore.Subscriptions; 
 
-namespace EventSourced.Framework {
+namespace EventSourced.Framework .SqlStreamStore
+{
 
     public class AllPersistenceIdsSqlStreamStoreProjection : IAllPersistenceIdsProjection 
     {

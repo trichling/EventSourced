@@ -1,6 +1,6 @@
 using System;
 
-namespace EventSourced.Framework
+namespace EventSourced.Framework.Abstracions
 {
 
     public interface IEventStream

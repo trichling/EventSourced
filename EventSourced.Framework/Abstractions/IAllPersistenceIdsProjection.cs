@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using SqlStreamStore.Streams;
 
-namespace EventSourced.Framework
+namespace EventSourced.Framework.Abstracions
 {
     public interface IAllPersistenceIdsProjection
     {
