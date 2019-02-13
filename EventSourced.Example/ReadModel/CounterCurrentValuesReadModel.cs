@@ -15,25 +15,25 @@ namespace EventSourced.Example.Example.ReadModel
 
         public CounterCurrentValuesReadModel(IEventSourcingSystem system) : base(system)
         {
+            this.CatchUp().GetAwaiter().GetResult();
+
             system.EventStream.Subscribe<CounterIntitialized>(Handle);
             system.EventStream.Subscribe<CounterIncremented>(Handle);
             system.EventStream.Subscribe<CounterDecremented>(Handle);
-
-            this.CatchUp().GetAwaiter().GetResult();
         }
       
 
-        public void Handle(string persistenceId, CounterIntitialized counterInitialized)
+        public void Handle(CounterIntitialized counterInitialized)
         {
             counterValues.Add(counterInitialized.CounterId, counterInitialized.InitialValue);
         }
 
-        public void Handle(string persistenceId, CounterIncremented counterIncremented)
+        public void Handle(CounterIncremented counterIncremented)
         {
             counterValues[counterIncremented.CounterId] += counterIncremented.ByValue;
         }
 
-         public void Handle(string persistenceId, CounterDecremented counterDecremented)
+         public void Handle(CounterDecremented counterDecremented)
         {
             counterValues[counterDecremented.CounterId] -= counterDecremented.ByValue;
         }

@@ -27,6 +27,8 @@ namespace EventSourced.Framework.Abstracions
         {
             while (!IsUpToDate)
                 await Task.Delay(10);
+
+            // somehow cancel the subscription!!
         }
 
         public virtual void Handle(object @event)
@@ -36,7 +38,9 @@ namespace EventSourced.Framework.Abstracions
         protected virtual void OnEvent(string persistenceId, dynamic @event, long position)
         {
             lastPosition = position;
-            ((dynamic)this).Handle(@event);
+
+            if (!IsUpToDate)
+                ((dynamic)this).Handle(@event);
         }
 
         protected virtual void OnHasCaughtUp()

@@ -32,7 +32,7 @@ namespace EventSourced.Framework
         {
             var persistSuccessful = await EventStore.Persist(persistenceId, @event);
             if (persistSuccessful)
-                EventStream.Publish(persistenceId, @event);
+                EventStream.Publish(@event);
                 
             return persistSuccessful;
         }
