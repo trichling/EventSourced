@@ -97,7 +97,7 @@ namespace EventSourced.Tests
             }
         }
 
-         [Fact]
+        [Fact]
         public async Task CanSubscribeToAllStreams()
         {
             var receivedMessagesCount = 0;
@@ -138,5 +138,29 @@ namespace EventSourced.Tests
         }
 
       
+        [Fact]
+        public async Task CanGetStreamVersion()
+        {
+            var streamStore = new InMemoryStreamStore();
+            var stream1 = new StreamId("test1");
+            var stream2 = new StreamId("test2");
+
+            var message1 = new NewStreamMessage(Guid.NewGuid(), "Test1", @"{ 'Hello': 'World1' }");
+            await streamStore.AppendToStream(stream1, ExpectedVersion.Any, message1);
+            message1 = new NewStreamMessage(Guid.NewGuid(), "Test1", @"{ 'Hello': 'World1' }");
+            await streamStore.AppendToStream(stream1, ExpectedVersion.Any, message1);
+
+            var message2 = new NewStreamMessage(Guid.NewGuid(), "Test2", @"{ 'Hello': 'World2' }");
+            await streamStore.AppendToStream(stream2, ExpectedVersion.Any, message2);
+
+            Thread.Sleep(100);
+
+            var stream1Metadata = await streamStore.GetStreamMetadata("test1");
+            var stream2Metadata = await streamStore.GetStreamMetadata("test2");
+
+            Assert.Equal(1, stream1Metadata.MetadataStreamVersion);
+            Assert.Equal(0, stream2Metadata.MetadataStreamVersion);
+
+        }
     }
 }

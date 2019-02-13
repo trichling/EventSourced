@@ -23,18 +23,18 @@ namespace EventSourced.Example
             var eventStore = new SqlStreamStoreEventStore(streamStore, tpyeResovler);
             var system = new EventSourcingSystem(eventStore);
 
-            var readModel = new CounterCurrentValuesReadModelBuilder(system);
+            var readModel = new CounterCurrentValuesReadModel(system);
 
             var counterId = Guid.Parse("8c936406-720a-45d4-b1e0-a95bd595943f");
             var counter = await system.Get(() => new Counter(counterId));
 
-            counter.Initialize(0);
+            if (!counter.IsInitialized())
+                counter.Initialize(0);
+
             counter.Increment(5);
             counter.Decrement(2);
 
             Thread.Sleep(5000);
         }
-
-     
     }
 }

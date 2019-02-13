@@ -53,7 +53,9 @@ namespace EventSourced.Framework
 
             foreach (var @event in uncommitedEvents[persistenceId])
             {
-                await EventStore.Persist(persistenceId, @event);
+                var persistSuccessful = await EventStore.Persist(persistenceId, @event);
+                if (persistSuccessful)
+                    EventStream.Publish(persistenceId, @event);
             }
 
             uncommitedEvents[persistenceId].Clear();

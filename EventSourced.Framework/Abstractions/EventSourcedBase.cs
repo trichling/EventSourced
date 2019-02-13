@@ -26,15 +26,9 @@ namespace EventSourced.Framework.Abstracions
         {
             var persistSuccessful = Context.Save(PersistenceId, @event).GetAwaiter().GetResult();
             if (persistSuccessful)
-                Publish(@event);
+                DispatchToApply(@event);
         }
-
-        public void Publish(object @event)
-        {
-            Context.EventStream.Publish(@event);
-            DispatchToApply(@event);
-        }
-
+        
         public void DispatchToApply(dynamic @event)
         {
             ((dynamic)this).Apply((dynamic)@event);

@@ -15,6 +15,11 @@ namespace EventSourced.Framework
 
         private IEventSourcingSystem underlyingSystem;
 
+        public EventSourcingSystem(IEventSourcingSystem underlyingSystem)
+        {
+            this.underlyingSystem = underlyingSystem;
+        }
+
         public EventSourcingSystem(IEventStore eventStore)
         {
             this.underlyingSystem = new EventSourcingSystemWithImmediateCommit(eventStore, new EventStream());
@@ -23,6 +28,18 @@ namespace EventSourced.Framework
         public EventSourcingSystem(IEventStore eventStore, IEventStream eventStream)
         {
             this.underlyingSystem = new EventSourcingSystemWithImmediateCommit(eventStore, eventStream);
+        }
+
+        public EventSourcingSystem WithImmediateCommit()
+        {
+            this.underlyingSystem = new EventSourcingSystemWithImmediateCommit(this.EventStore, this.EventStream);
+            return this;
+        }
+
+        public EventSourcingSystem WithExplicitCommit()
+        {
+            this.underlyingSystem = new EventSourcingSystemWithExplicitCommit(this.EventStore, this.EventStream);
+            return this;
         }
 
         public IEventStore EventStore => this.underlyingSystem.EventStore;

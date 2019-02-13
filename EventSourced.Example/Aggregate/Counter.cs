@@ -17,9 +17,14 @@ namespace EventSourced.Example.Aggregate
             _id = id;
         }
 
+        public bool IsInitialized()
+        {
+            return _counter != null;
+        }
+
         public void Initialize(int initialValue)
         {
-            if (_counter != null)
+            if (IsInitialized())
                 throw new Exception("Counter ist bereits initialisiert");
 
             Causes(new CounterIntitialized(_id, initialValue));

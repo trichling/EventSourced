@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using SqlStreamStore.Subscriptions;
 using EventSourced.Framework;
+using EventSourced.Framework.Abstracions;
 using EventSourced.Framework.SqlStreamStore;
 
 namespace EventSourced.Tests
@@ -17,42 +18,40 @@ namespace EventSourced.Tests
         public async Task GivenExistingEventStore_CanBuildAllPersistenceIdsProjection()
         {
             var streamStore = new InMemoryStreamStore();
+            var tpyeResovler = new FullyQualifiedTypeNameTypeResolver("EventSourced.Example.Aggregate.Events.{0}, EventSourced.Example");
+            var eventStore = new SqlStreamStoreEventStore(streamStore, tpyeResovler);
 
-            var stream1 = new StreamId("test1");
-            var message1 = new NewStreamMessage(Guid.NewGuid(), "Test1", @"{ 'Hello': 'World1' }");
-            await streamStore.AppendToStream(stream1, ExpectedVersion.Any, message1);
+            var system = new EventSourcingSystem(eventStore);
 
-            var stream2 = new StreamId("test2");
-            var message2 = new NewStreamMessage(Guid.NewGuid(), "Test2", @"{ 'Hello': 'World2' }");
-            await streamStore.AppendToStream(stream2, ExpectedVersion.Any, message2);
+            await system.EventStore.Persist("test1", new { Data = "Test1" });
+            await system.EventStore.Persist("test2", new { Data = "Test2" });
 
-            var allPersistenceIdsProjection = new AllPersistenceIdsSqlStreamStoreProjection(streamStore);
+            var allPersistenceIdsProjection = new AllPresistenceIdsReadModel(system);
 
-            await allPersistenceIdsProjection.WaitUntilIsUpToDate();
-
-            Assert.Equal(2, allPersistenceIdsProjection.StreamIds.Count);
+            Assert.Equal(2, allPersistenceIdsProjection.PersistenceIds.Count);
         }
 
         [Fact]
         public async Task GivenExistingEventStore_WhenAddingAnEventToTheStore_AllPersistenceIdsProjectionIsUpdated()
         {
             var streamStore = new InMemoryStreamStore();
+            var tpyeResovler = new FullyQualifiedTypeNameTypeResolver("EventSourced.Example.Aggregate.Events.{0}, EventSourced.Example");
+            var eventStore = new SqlStreamStoreEventStore(streamStore, tpyeResovler);
 
-             var stream1 = new StreamId("test1");
-            var message1 = new NewStreamMessage(Guid.NewGuid(), "Test1", @"{ 'Hello': 'World1' }");
-            await streamStore.AppendToStream(stream1, ExpectedVersion.Any, message1);
+            var system = new EventSourcingSystem(eventStore);
 
-            var allPersistenceIdsProjection = new AllPersistenceIdsSqlStreamStoreProjection(streamStore);
+            await system.EventStore.Persist("test1", new { Data = "Test1" });
+            await system.EventStore.Persist("test2", new { Data = "Test2" });
 
-            await allPersistenceIdsProjection.WaitUntilIsUpToDate();
-            Assert.Equal(1, allPersistenceIdsProjection.StreamIds.Count);
+            var allPersistenceIdsProjection = new AllPresistenceIdsReadModel(system);
 
-            var stream2 = new StreamId("test2");
-            var message2 = new NewStreamMessage(Guid.NewGuid(), "Test2", @"{ 'Hello': 'World2' }");
-            await streamStore.AppendToStream(stream2, ExpectedVersion.Any, message2);
+            Assert.Equal(2, allPersistenceIdsProjection.PersistenceIds.Count);
 
-            await allPersistenceIdsProjection.WaitUntilIsUpToDate();
-            Assert.Equal(2, allPersistenceIdsProjection.StreamIds.Count);
+            await system.EventStore.Persist("test3", new { Data = "Test3" });
+
+            await Task.Delay(10);
+
+            Assert.Equal(3, allPersistenceIdsProjection.PersistenceIds.Count);
         }
     }
 }

@@ -1,12 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using EventSourced.Framework.Abstracions;
-using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
-using SqlStreamStore;
-using SqlStreamStore.Streams;
 
 namespace EventSourced.Framework
 {
@@ -34,9 +28,13 @@ namespace EventSourced.Framework
             return instance;
         }
 
-        public Task<bool> Save(string persistenceId, dynamic @event)
+        public async Task<bool> Save(string persistenceId, dynamic @event)
         {
-            return EventStore.Persist(persistenceId, @event);
+            var persistSuccessful = await EventStore.Persist(persistenceId, @event);
+            if (persistSuccessful)
+                EventStream.Publish(persistenceId, @event);
+                
+            return persistSuccessful;
         }
 
         public Task<bool> Commit(string persistenceId)
