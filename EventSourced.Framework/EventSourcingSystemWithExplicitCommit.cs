@@ -19,6 +19,7 @@ namespace EventSourced.Framework
         {
             EventStore = eventStore;
             EventStream = eventStream;
+            uncommitedEvents = new Dictionary<string, List<object>>();
         }
 
         public IEventStore EventStore { get; }
