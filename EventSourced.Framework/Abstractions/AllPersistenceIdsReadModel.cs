@@ -6,21 +6,23 @@ using System.Threading.Tasks;
 namespace EventSourced.Framework.Abstracions
 {
 
-    public class AllPresistenceIdsReadModel : ReadModelBase
+    public class AllPersistenceIdsReadModel : ReadModelBase
     {
         private HashSet<string> persistenceIds;
 
-        public AllPresistenceIdsReadModel(IEventSourcingSystem system) : base(system)
+        public AllPersistenceIdsReadModel(IEventSourcingSystem system) : base(system)
         {
             this.persistenceIds = new HashSet<string>();
-            this.CatchUp();
+            this.StartCatchingUpFrom(0);
         }
         
         public ReadOnlyCollection<string> PersistenceIds => new ReadOnlyCollection<string>(persistenceIds.ToList());
 
         protected override void OnEvent(string persistenceId, dynamic @event, long position)
         {
+            lastPosition = position;
             persistenceIds.Add(persistenceId);
         }
+
     }
 }

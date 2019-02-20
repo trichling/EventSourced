@@ -8,7 +8,9 @@ namespace EventSourced.Framework.Abstracions
 
         bool IsUpToDate { get; }
 
-        Task CatchUp();
+        void StartCatchingUpFrom(long lastPosition);
+
+        Task WaitForCatchUp();
         
     }
 

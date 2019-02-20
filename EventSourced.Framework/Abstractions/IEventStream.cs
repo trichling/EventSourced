@@ -9,6 +9,7 @@ namespace EventSourced.Framework.Abstracions
         void Subscribe<T>(Action<T> handler);
 
         void Publish(object @event);
+        
     }
 
 }

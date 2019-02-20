@@ -15,13 +15,14 @@ namespace EventSourced.Example.Example.ReadModel
 
         public CounterCurrentValuesReadModel(IEventSourcingSystem system) : base(system)
         {
-            this.CatchUp().GetAwaiter().GetResult();
+            // Da dies ein In-Memory-Readmodel ist, muss es immer von 0 aufholen wenn es neu erstellt wird.
+            this.StartCatchingUpFrom(0);
+            this.WaitForCatchUp().GetAwaiter().GetResult();
 
             system.EventStream.Subscribe<CounterIntitialized>(Handle);
             system.EventStream.Subscribe<CounterIncremented>(Handle);
             system.EventStream.Subscribe<CounterDecremented>(Handle);
         }
-      
 
         public void Handle(CounterIntitialized counterInitialized)
         {

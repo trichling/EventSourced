@@ -7,6 +7,7 @@ using SqlStreamStore;
 using EventSourced.Example.Aggregate;
 using EventSourced.Example.Example.ReadModel;
 using EventSourced.Framework.SqlStreamStore;
+using EventSourced.Framework.Abstracions;
 
 namespace EventSourced.Example
 {
@@ -23,7 +24,8 @@ namespace EventSourced.Example
             var eventStore = new SqlStreamStoreEventStore(streamStore, tpyeResovler);
             var system = new EventSourcingSystem(eventStore);
 
-            var readModel = new CounterCurrentValuesReadModel(system);
+            var counterCurrentValuesReadModel = new CounterCurrentValuesReadModel(system);
+            //var allPersistenceIdsReadModel = new AllPersistenceIdsReadModel(system);
 
             var counterId = Guid.Parse("8c936406-720a-45d4-b1e0-a95bd595943f");
             var counter = await system.Get(() => new Counter(counterId));
@@ -35,6 +37,9 @@ namespace EventSourced.Example
             counter.Decrement(2);
 
             Thread.Sleep(5000);
+
+
         }
     }
 }
+

@@ -22,17 +22,10 @@ namespace EventSourced.Framework.SqlStreamStore
             this.typeResovler = typeResovler;
         }
 
-        public async Task<long> StoreVersion()
+        public long StoreVersion()
         {
-            var headPosition = await streamStore.ReadHeadPosition();
+            var headPosition = streamStore.ReadHeadPosition().GetAwaiter().GetResult();
             return headPosition;
-        }
-
-        public async Task<int> StreamVersion(string persistenceId)
-        {
-            var streamId = new StreamId(persistenceId);
-            var lastPage = await streamStore.ReadStreamBackwards(streamId, global::SqlStreamStore.Streams.StreamVersion.End, 1, false);
-            return lastPage.LastStreamVersion;
         }
 
         public async Task<IEnumerable<dynamic>> GetHistory(string persistenceId)
@@ -59,9 +52,12 @@ namespace EventSourced.Framework.SqlStreamStore
             return true;
         }
 
-        public void CatchUpSubscription(Action<string, dynamic, long> onEvent, Action onHasCaughtUp)
+        public IDisposable CatchUpSubscription(long lastPosition, Action<string, dynamic, long> onEvent, Action onHasCaughtUp)
         {
-            this.streamStore.SubscribeToAll(null, messageHandler, subscriptionDroppedHandler, hasCaughtUpHandler);
+            if (StoreVersion() == -1)
+                hasCaughtUpHandler(true);
+
+            return this.streamStore.SubscribeToAll(lastPosition, messageHandler, subscriptionDroppedHandler, hasCaughtUpHandler);
 
             async Task messageHandler(IAllStreamSubscription subscription, StreamMessage streamMessage, CancellationToken cancellationToken) 
             {

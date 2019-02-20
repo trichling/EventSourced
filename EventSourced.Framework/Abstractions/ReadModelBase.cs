@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using EventSourced.Framework.Abstracions;
 
@@ -7,28 +8,29 @@ namespace EventSourced.Framework.Abstracions
     public class ReadModelBase : IReadModel
     {
         private readonly IEventSourcingSystem system;
-        private bool hasCaughtUp;
-        private long lastPosition;
+        protected bool hasCaughtUp;
+        protected long lastPosition;
+        protected IDisposable subscription;
 
         public ReadModelBase(IEventSourcingSystem system)
         {
             this.system = system;
+            this.lastPosition = -1;
         }
 
-        public virtual bool IsUpToDate => system.EventStore.StoreVersion().Result == -1 || (hasCaughtUp && lastPosition == system.EventStore.StoreVersion().Result);
+        public virtual bool IsUpToDate => hasCaughtUp && lastPosition == system.EventStore.StoreVersion();
 
-        public async Task CatchUp()
+        public void StartCatchingUpFrom(long lastPosition)
         {
-            this.system.EventStore.CatchUpSubscription(OnEvent, OnHasCaughtUp);
-            await WaitForCatchUp();
+            subscription = this.system.EventStore.CatchUpSubscription(lastPosition, OnEvent, OnHasCaughtUp);
         }
 
-        private async Task WaitForCatchUp()
+        public async Task WaitForCatchUp()
         {
             while (!IsUpToDate)
                 await Task.Delay(10);
 
-            // somehow cancel the subscription!!
+            subscription.Dispose();
         }
 
         public virtual void Handle(object @event)
