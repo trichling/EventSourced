@@ -36,12 +36,12 @@ namespace EventSourced.Framework.Abstractions
         {
         }
 
-        protected virtual void OnEvent(string persistenceId, dynamic @event, long position)
+        protected virtual void OnEvent(string persistenceId, long position, object @event)
         {
             lastPosition = position;
 
             if (!IsUpToDate)
-                ((dynamic)this).Handle(@event);
+                ((dynamic)this).Handle((dynamic)@event);
         }
 
         protected virtual void OnHasCaughtUp()

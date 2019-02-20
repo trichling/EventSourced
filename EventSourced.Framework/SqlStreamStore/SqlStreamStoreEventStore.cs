@@ -52,7 +52,7 @@ namespace EventSourced.Framework.SqlStreamStore
             return true;
         }
 
-        public IDisposable CatchUpSubscription(long lastPosition, Action<string, dynamic, long> onEvent, Action onHasCaughtUp)
+        public IDisposable CatchUpSubscription(long lastPosition, EventHandlerCallback onEvent, Action onHasCaughtUp)
         {
             if (StoreVersion() == -1)
                 hasCaughtUpHandler(true);
@@ -62,7 +62,7 @@ namespace EventSourced.Framework.SqlStreamStore
             async Task messageHandler(IAllStreamSubscription subscription, StreamMessage streamMessage, CancellationToken cancellationToken) 
             {
                 var @event = await DeserializeEvent(streamMessage);
-                onEvent(streamMessage.StreamId, @event, streamMessage.Position);
+                onEvent(streamMessage.StreamId, streamMessage.Position, @event);
             }
 
             void subscriptionDroppedHandler(IAllStreamSubscription subscription, SubscriptionDroppedReason reason, Exception exception = null)

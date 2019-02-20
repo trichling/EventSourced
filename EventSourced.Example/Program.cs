@@ -25,7 +25,7 @@ namespace EventSourced.Example
             var system = new EventSourcingSystem(eventStore);
 
             var counterCurrentValuesReadModel = new CounterCurrentValuesReadModel(system);
-            //var allPersistenceIdsReadModel = new AllPersistenceIdsReadModel(system);
+            var allPersistenceIdsReadModel = new AllPersistenceIdsReadModel(system);
 
             var counterId = Guid.Parse("8c936406-720a-45d4-b1e0-a95bd595943f");
             var counter = await system.Get(() => new Counter(counterId));

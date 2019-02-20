@@ -10,7 +10,7 @@ namespace EventSourced.Framework.Abstractions
 
         long StoreVersion();
 
-        IDisposable CatchUpSubscription(long lastPosition, Action<string, dynamic, long> eventHandler, Action hasCaughtUp);
+        IDisposable CatchUpSubscription(long lastPosition, EventHandlerCallback eventHandler, Action hasCaughtUp);
 
         Task<IEnumerable<dynamic>> GetHistory(string persistenceId);
 
