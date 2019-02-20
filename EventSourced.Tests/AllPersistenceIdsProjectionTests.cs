@@ -26,7 +26,7 @@ namespace EventSourced.Tests
             await system.EventStore.Persist("test1", new { Data = "Test1" });
             await system.EventStore.Persist("test2", new { Data = "Test2" });
 
-            var allPersistenceIdsProjection = new AllPresistenceIdsReadModel(system);
+            var allPersistenceIdsProjection = new AllPersistenceIdsReadModel(system);
 
             Assert.Equal(2, allPersistenceIdsProjection.PersistenceIds.Count);
         }
@@ -43,7 +43,7 @@ namespace EventSourced.Tests
             await system.EventStore.Persist("test1", new { Data = "Test1" });
             await system.EventStore.Persist("test2", new { Data = "Test2" });
 
-            var allPersistenceIdsProjection = new AllPresistenceIdsReadModel(system);
+            var allPersistenceIdsProjection = new AllPersistenceIdsReadModel(system);
 
             Assert.Equal(2, allPersistenceIdsProjection.PersistenceIds.Count);
 
