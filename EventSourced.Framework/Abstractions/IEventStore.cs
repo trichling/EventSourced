@@ -14,7 +14,7 @@ namespace EventSourced.Framework.Abstractions
 
         Task<IEnumerable<dynamic>> GetHistory(string persistenceId);
 
-        Task<bool> Persist(string persistenceId, object @event);
+        Task<long> Persist(string persistenceId, object @event);
         
        
 

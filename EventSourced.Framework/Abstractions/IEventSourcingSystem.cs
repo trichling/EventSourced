@@ -13,7 +13,7 @@ namespace EventSourced.Framework.Abstractions
 
         Task<T> Get<T> (Func<T> factory) where T : EventSourcedBase; 
 
-        Task<bool> Save(string persistenceId, dynamic @event);
+        Task Save(string persistenceId, object @event);
 
         Task<bool> Commit(string persistenceId);
 

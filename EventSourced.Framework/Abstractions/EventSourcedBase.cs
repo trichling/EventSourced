@@ -24,9 +24,8 @@ namespace EventSourced.Framework.Abstractions
 
         public async void Persist(object @event)
         {
-            var persistSuccessful = Context.Save(PersistenceId, @event).GetAwaiter().GetResult();
-            if (persistSuccessful)
-                DispatchToApply(@event);
+            Context.Save(PersistenceId, @event).GetAwaiter().GetResult();
+            DispatchToApply(@event);
         }
         
         public void DispatchToApply(dynamic @event)

@@ -17,7 +17,9 @@ namespace EventSourced.Framework.Abstractions
             this.lastPosition = -1;
         }
 
-        public virtual bool IsUpToDate => hasCaughtUp && lastPosition == system.EventStore.StoreVersion();
+        public long LastPosition => lastPosition;
+
+        public bool IsUpToDate => hasCaughtUp && lastPosition == system.EventStore.StoreVersion();
 
         public void StartCatchingUpFrom(long lastPosition)
         {
@@ -32,16 +34,21 @@ namespace EventSourced.Framework.Abstractions
             subscription.Dispose();
         }
 
-        public virtual void Handle(object @event)
+        public virtual void Apply(string persistenceId, long? position, object @event)
         {
+            if (position.HasValue)
+               lastPosition = position.Value;
+
+            ((dynamic)this).Apply((dynamic)@event);
         }
 
-        protected virtual void OnEvent(string persistenceId, long position, object @event)
+        protected virtual void OnEvent(string persistenceId, long? position, object @event)
         {
-            lastPosition = position;
+            if (position.HasValue)
+                lastPosition = position.Value;
 
             if (!IsUpToDate)
-                ((dynamic)this).Handle((dynamic)@event);
+                ((dynamic)this).Apply((dynamic)@event);
         }
 
         protected virtual void OnHasCaughtUp()

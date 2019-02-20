@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using EventSourced.Framework.Abstractions;
 
@@ -9,7 +10,7 @@ namespace EventSourced.Framework
     {
         private Dictionary<Type, List<dynamic>> handlerList = new Dictionary<Type, List<dynamic>>();
 
-         public void Subscribe<T>(Action<T> handler)
+        public void Subscribe<T>(EventHandlerCallback handler)
         {
             if (!handlerList.ContainsKey(typeof(T)))
                 handlerList.Add(typeof(T), new List<dynamic>());
@@ -17,18 +18,18 @@ namespace EventSourced.Framework
             handlerList[typeof(T)].Add(handler);
         }
 
-        public void Publish(object notification)
+        public void Publish(IEvent notification)
         {
             Task.Factory.StartNew(() => {
-                var eventType = notification.GetType();
+                var eventType = notification.Payload.GetType();
 
                 if (!handlerList.ContainsKey(eventType))
                     return;
 
-                var handlers = handlerList[notification.GetType()].AsReadOnly();
+                var handlers = handlerList[eventType].AsReadOnly();
                 foreach (var handler in handlers)
                 {
-                    ((Delegate)handler).DynamicInvoke(notification);
+                    ((Delegate)handler).DynamicInvoke(notification.PersistenceId, notification.Position, notification.Payload);
                 }
             });
         }

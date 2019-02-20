@@ -51,9 +51,9 @@ namespace EventSourced.Framework
             return this.underlyingSystem.Get<T>(factory);
         }
 
-        public Task<bool> Save(string persistenceId, dynamic @event)
+        public async Task Save(string persistenceId, dynamic @event)
         {
-            return this.underlyingSystem.Save(persistenceId, @event);
+            await this.underlyingSystem.Save(persistenceId, @event);
         }
 
         public Task<bool> Commit(string persistenceId)

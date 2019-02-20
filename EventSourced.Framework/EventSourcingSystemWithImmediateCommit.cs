@@ -28,13 +28,10 @@ namespace EventSourced.Framework
             return instance;
         }
 
-        public async Task<bool> Save(string persistenceId, dynamic @event)
+        public async Task Save(string persistenceId, object @event)
         {
-            var persistSuccessful = await EventStore.Persist(persistenceId, @event);
-            if (persistSuccessful)
-                EventStream.Publish(@event);
-                
-            return persistSuccessful;
+            var newPosition = await EventStore.Persist(persistenceId, @event);
+            EventStream.Publish(new Event(persistenceId, newPosition, @event));
         }
 
         public Task<bool> Commit(string persistenceId)

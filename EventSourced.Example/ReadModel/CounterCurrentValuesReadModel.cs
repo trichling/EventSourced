@@ -19,22 +19,22 @@ namespace EventSourced.Example.Example.ReadModel
             this.StartCatchingUpFrom(0);
             this.WaitForCatchUp().GetAwaiter().GetResult();
 
-            system.EventStream.Subscribe<CounterIntitialized>(Handle);
-            system.EventStream.Subscribe<CounterIncremented>(Handle);
-            system.EventStream.Subscribe<CounterDecremented>(Handle);
+            system.EventStream.Subscribe<CounterIntitialized>(Apply);
+            system.EventStream.Subscribe<CounterIncremented>(Apply);
+            system.EventStream.Subscribe<CounterDecremented>(Apply);
         }
 
-        public void Handle(CounterIntitialized counterInitialized)
+        public void Apply(CounterIntitialized counterInitialized)
         {
             counterValues.Add(counterInitialized.CounterId, counterInitialized.InitialValue);
         }
 
-        public void Handle(CounterIncremented counterIncremented)
+        public void Apply(CounterIncremented counterIncremented)
         {
             counterValues[counterIncremented.CounterId] += counterIncremented.ByValue;
         }
 
-         public void Handle(CounterDecremented counterDecremented)
+         public void Apply(CounterDecremented counterDecremented)
         {
             counterValues[counterDecremented.CounterId] -= counterDecremented.ByValue;
         }

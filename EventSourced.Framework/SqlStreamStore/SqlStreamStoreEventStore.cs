@@ -43,13 +43,13 @@ namespace EventSourced.Framework.SqlStreamStore
             return history;
         }
 
-        public async Task<bool> Persist(string persistenceId, object @event)
+        public async Task<long> Persist(string persistenceId, object @event)
         {
             var streamId = new StreamId(persistenceId);
             var message = new NewStreamMessage(Guid.NewGuid(), @event.GetType().Name, JsonConvert.SerializeObject(@event));
             var appendResult = await streamStore.AppendToStream(streamId, ExpectedVersion.Any, message);
 
-            return true;
+            return appendResult.CurrentPosition;
         }
 
         public IDisposable CatchUpSubscription(long lastPosition, EventHandlerCallback onEvent, Action onHasCaughtUp)

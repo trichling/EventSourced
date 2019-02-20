@@ -36,14 +36,14 @@ namespace EventSourced.Framework
             return instance;
         }
 
-        public Task<bool> Save(string persistenceId, dynamic @event)
+        public Task Save(string persistenceId, dynamic @event)
         {
             if (!uncommitedEvents.ContainsKey(persistenceId))
                 uncommitedEvents.Add(persistenceId, new List<object>());
 
             uncommitedEvents[persistenceId].Add(@event);
 
-            return Task.FromResult(true);
+            return Task.CompletedTask;
         }
 
         public async Task<bool> Commit(string persistenceId)
@@ -53,9 +53,8 @@ namespace EventSourced.Framework
 
             foreach (var @event in uncommitedEvents[persistenceId])
             {
-                var persistSuccessful = await EventStore.Persist(persistenceId, @event);
-                if (persistSuccessful)
-                    EventStream.Publish(@event);
+                var newPosition = await EventStore.Persist(persistenceId, @event);
+                EventStream.Publish(new Event(persistenceId, newPosition, @event));            
             }
 
             uncommitedEvents[persistenceId].Clear();

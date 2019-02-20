@@ -19,9 +19,9 @@ namespace EventSourced.Framework
         
         public ReadOnlyCollection<string> PersistenceIds => new ReadOnlyCollection<string>(persistenceIds.ToList());
 
-        protected override void OnEvent(string persistenceId, long position, object @event)
+        protected override void OnEvent(string persistenceId, long? position, object @event)
         {
-            lastPosition = position;
+            lastPosition = position.Value;
             persistenceIds.Add(persistenceId);
         }
 
