@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace EventSourced.Framework.Abstracions
+namespace EventSourced.Framework.Abstractions
 {
     public abstract class EventSourcedBase
     {

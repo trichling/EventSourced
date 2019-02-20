@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using EventSourced.Framework;
 using EventSourced.Example.Aggregate.Events;
-using EventSourced.Framework.Abstracions;
+using EventSourced.Framework.Abstractions;
 using System.Threading.Tasks;
 
 namespace EventSourced.Example.Example.ReadModel

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using EventSourced.Framework.Abstracions;
+using EventSourced.Framework.Abstractions;
 
 namespace EventSourced.Framework
 {

@@ -1,7 +1,7 @@
 using System;
 using EventSourced.Framework;
 using EventSourced.Example.Aggregate.Events;
-using EventSourced.Framework.Abstracions;
+using EventSourced.Framework.Abstractions;
 
 namespace EventSourced.Example.Aggregate
 {

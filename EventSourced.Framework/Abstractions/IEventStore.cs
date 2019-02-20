@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace EventSourced.Framework.Abstracions
+namespace EventSourced.Framework.Abstractions
 {
 
     public interface IEventStore

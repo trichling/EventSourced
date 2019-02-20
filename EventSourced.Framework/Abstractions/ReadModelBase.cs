@@ -1,8 +1,7 @@
 using System;
 using System.Threading.Tasks;
-using EventSourced.Framework.Abstracions;
 
-namespace EventSourced.Framework.Abstracions
+namespace EventSourced.Framework.Abstractions
 {
 
     public class ReadModelBase : IReadModel

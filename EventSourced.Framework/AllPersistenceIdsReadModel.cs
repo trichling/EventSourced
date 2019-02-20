@@ -2,8 +2,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using EventSourced.Framework.Abstractions;
 
-namespace EventSourced.Framework.Abstracions
+namespace EventSourced.Framework
 {
 
     public class AllPersistenceIdsReadModel : ReadModelBase

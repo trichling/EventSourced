@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using EventSourced.Framework.Abstracions;
+using EventSourced.Framework.Abstractions;
 
 namespace EventSourced.Framework
 {

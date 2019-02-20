@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace EventSourced.Framework.Abstracions
+namespace EventSourced.Framework.Abstractions
 {
 
     public interface IReadModel

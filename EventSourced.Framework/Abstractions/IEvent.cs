@@ -1,0 +1,4 @@
+namespace EventSourced.Framework.Abstractions
+{
+
+}

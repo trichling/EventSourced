@@ -1,6 +1,6 @@
 using System;
 
-namespace EventSourced.Framework.Abstracions
+namespace EventSourced.Framework.Abstractions
 {
     public interface ITypeResovler
     {

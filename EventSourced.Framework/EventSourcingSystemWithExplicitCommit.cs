@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using EventSourced.Framework.Abstracions;
+using EventSourced.Framework.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using SqlStreamStore;

@@ -7,7 +7,7 @@ using SqlStreamStore;
 using EventSourced.Example.Aggregate;
 using EventSourced.Example.Example.ReadModel;
 using EventSourced.Framework.SqlStreamStore;
-using EventSourced.Framework.Abstracions;
+using EventSourced.Framework.Abstractions;
 
 namespace EventSourced.Example
 {

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using SqlStreamStore.Subscriptions;
 using EventSourced.Framework;
-using EventSourced.Framework.Abstracions;
+using EventSourced.Framework.Abstractions;
 using EventSourced.Framework.SqlStreamStore;
 
 namespace EventSourced.Tests
