@@ -7,11 +7,11 @@ using SqlStreamStore.Streams;
 namespace EventSourced.Simple.Framework
 {
 
-    public class Repository<T> : IRepository<T> where T : EventSourcedBase
+    public class SqlStreamStoreRepository<T> : IRepository<T> where T : EventSourcedBase
     {
         private readonly IStreamStore streamStore;
 
-        public Repository(IStreamStore streamStore)
+        public SqlStreamStoreRepository(IStreamStore streamStore)
         {
             this.streamStore = streamStore;
         }
