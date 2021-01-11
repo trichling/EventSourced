@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 namespace EventSourced.Simple.Framework
 {
 
-    public class ReadModelBuilderBase : IProjection
+    public class ProjectionBase : IProjection
     {
-        public ReadModelBuilderBase(string name, string stream)
+        public ProjectionBase(string name, string stream)
         {
             Name = name;
             Stream = stream;

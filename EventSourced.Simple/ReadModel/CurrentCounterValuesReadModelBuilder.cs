@@ -6,7 +6,7 @@ using EventSourced.Simple.Framework;
 
 namespace EventSourced.Simple.ReadModel
 {
-    public class CurrentCounterValuesReadModelBuilder : ReadModelBuilderBase
+    public class CurrentCounterValuesReadModelBuilder : ProjectionBase
     {
         public Dictionary<Guid, int> CounterValues;
 

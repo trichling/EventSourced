@@ -27,7 +27,7 @@ namespace EventSourced.Simple
             var esClient = new EventStoreClient(settings);
             var esPersistenSubscriptionClient = new EventStorePersistentSubscriptionsClient(settings);
 
-            var projection = await CreateProjection(settings, persistent: false);
+            var projection = await CreateProjection(settings, persistent: true);
 
             Console.ReadLine();
 

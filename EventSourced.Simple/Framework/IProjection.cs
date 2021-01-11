@@ -8,6 +8,6 @@ namespace EventSourced.Simple.Framework
 
         string Stream { get; }
 
-         Task Handle(dynamic e);
+            Task Handle(dynamic e);
     }
 }
