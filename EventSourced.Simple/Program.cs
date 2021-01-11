@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using EventSourced.Simple.Aggregate;
 using EventSourced.Simple.Framework;
+using EventSourced.Simple.ReadModel;
 using EventStore.Client;
 using SqlStreamStore;
 
@@ -11,7 +12,6 @@ namespace EventSourced.Simple
     public class Program
     {
 
-        static IStreamStore streamStore;
         static IRepository<Counter> repository;
 
         static async Task Main(string[] args)
@@ -21,22 +21,48 @@ namespace EventSourced.Simple
 
         public static async Task WithEventStore()
         {
-            var connectionString = "esdb://localhost:2113?Tls=true";
+            var connectionString = "esdb://localhost:2113?tls=true&tlsVerifyCert=false";
             var settings = EventStoreClientSettings.Create(connectionString);
             settings.DefaultCredentials = new UserCredentials("admin", "changeit");
-                        settings.CreateHttpMessageHandler = () => 
-                            new HttpClientHandler 
-                            {
-                                ServerCertificateCustomValidationCallback =
-                                    (sender, cert, chain, sslPolicyErrors) => true
-                            };
-            var eventStore = new EventStoreClient(settings);
+            var esClient = new EventStoreClient(settings);
+            var esPersistenSubscriptionClient = new EventStorePersistentSubscriptionsClient(settings);
 
-            repository = new EventStoreRepository<Counter>(eventStore);
+            var projection = await CreateProjection(settings, persistent: false);
 
-            var counterId = Guid.Parse("fbb0f16b-646a-45d3-a1ee-596217897b63");
-            await CreateAndSaveCounter(counterId);
-            await LoadAndUpdateCounter(counterId);
+            Console.ReadLine();
+
+            repository = new EventStoreRepository<Counter>(esClient);
+
+            for (int i = 0; i < 10; i++)
+            {
+                var counterId = Guid.NewGuid(); // Guid.Parse("fbb0f16b-646a-45d3-a1ee-596217897b61");
+                await CreateAndSaveCounter(counterId);
+                await LoadAndUpdateCounter(counterId);
+            }
+
+            Console.ReadLine();
+
+            projection.Unsubscribe();
+        }
+
+        private static async Task<IProjectionHost> CreateProjection(EventStoreClientSettings settings, bool persistent)
+        {
+            IProjectionHost projectionHost;
+            var currentCounterValuesReadModelBuilder = new CurrentCounterValuesReadModelBuilder();
+           
+            if (persistent)
+            {
+                var esPersistenSubscriptionClient = new EventStorePersistentSubscriptionsClient(settings);
+                projectionHost = new EsPersistentSubscriptionProjectionHost(currentCounterValuesReadModelBuilder, esPersistenSubscriptionClient);
+            }
+            else
+            {
+                var esClient = new EventStoreClient(settings);
+                projectionHost = new EsVolatileSubscriptionProjecctionHost(currentCounterValuesReadModelBuilder, esClient, new NoCheckpoinProvider());
+            }
+
+            await projectionHost.Subscribe();
+            return projectionHost;
         }
 
         public static async Task WithSqlStreamStore()
@@ -48,7 +74,7 @@ namespace EventSourced.Simple
 
             repository = new SqlStreamStoreRepository<Counter>(streamStore);
 
-            var counterId = Guid.Parse("fbb0f16b-646a-45d3-a1ee-596217897b63");
+            var counterId = Guid.Parse("fbb0f16b-646a-45d3-a1ee-596217897b62");
             await CreateAndSaveCounter(counterId);
             await LoadAndUpdateCounter(counterId);
         }

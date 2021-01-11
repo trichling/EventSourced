@@ -21,6 +21,9 @@ namespace EventSourced.Simple.Aggregate
             if (_counter != null)
                 throw new Exception("Counter ist bereits initialisiert");
 
+            if (initialValue < 0)
+                throw new Exception("Counter darf nicht negativ werden");
+
             Causes(new CounterIntitialized(_id, initialValue));
         }
 
